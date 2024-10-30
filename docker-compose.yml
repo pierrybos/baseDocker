@@ -1,0 +1,35 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "4000:3000"
+    environment:
+      - NODE_ENV=development
+    
+  postgres:
+    image: postgres:latest
+    container_name: eventos-postgres # nome único para evitar conflitos
+    environment:
+      POSTGRES_USER: eventos_user
+      POSTGRES_PASSWORD: eventospw
+      POSTGRES_DB: eventos_db
+    ports:
+      - "5433:5432" # mapeia 5433 da máquina para 5432 do container
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  tests:
+    build:
+      context: .
+    command: npm run test
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
